@@ -39,6 +39,10 @@ private:
 private:
     // 引用计数-1，如果引用计数为0，则回收堆空间
     void release() {
+        // fetch_sub 先返回一开始的值，再减去第一个参数
+        // 有三步操作：1、加载内存的值，2、在寄存中修改，3、写回内存
+        // acq_rel 中，acq是为了获取到最新的值，rel是为了写进去的值能同步更新到其他线程中去
+        // acq_rel在这里还相当于内存屏障，上面的代码不会优化到下面，下面的代码不会优化到上面
         if(_ref_count && _ref_count->fetch_sub(1,std::memory_order_acq_rel) == 1) {
             std::default_delete<T>{}(_ptr); 
             // 使用 std::default_delete 处理自定义类型
@@ -81,7 +85,7 @@ public:
             _ref_count->fetch_add(1, std::memory_order_relaxed); 
             // 引用计数增加，使用 fetch_add原子操作实现
             // 内存序不熟悉的话，可以不用填第二个参数
-            // 这里使用松散的内存序，因为增加的话不会为0，先加后加没有太大影响
+            // 这里使用松散的内存序，因为增加的话不会为0，先加后加没有太大影响，不需要加强的内存序
         }
     }
 

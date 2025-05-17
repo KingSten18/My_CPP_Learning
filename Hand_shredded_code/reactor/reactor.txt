@@ -1,0 +1,31 @@
+/*
+1、reactor是什么
+    reactor是一种处理高并发网络请求的 设计模式 ；
+    它采用了 同步非阻塞 的方式来处理IO请求
+
+    本质：将对IO的处理转化为对（就绪）事件的处理
+
+    reactor是将对IO的处理，转化为对 就绪事件的处理
+    proactor是将IO的处理，转化为对 完成事件的处理
+
+2、解决什么问题
+    设计模式，能将 事件监听分发，与事件处理解耦，避免为每个连接使用独立的线程(阻塞)而造成资源浪费
+
+3、处理步骤：注册事件 、 事件监听与分发、 事件处理（使用io多路复用结局人io处理时机的问题
+
+    epoll_ctl     -   epoll_wait   --- callback:处理io (accept  read\recv   write\send)
+
+
+类设计：
+    EventLoop 用于实现事件注册、监听、分发
+    TcpServer类，用于实现接受新的连接
+    TcpConn类，用于实现客户端连接的处理
+
+
+*/
+
+MessageBuffer.h 缓冲区设计
+TcpConnection.h 对应一条连接
+TcpServer.h 用于接收连接
+
+
